@@ -1,9 +1,0 @@
-README.md
-setup.py
-UfukMSA/__init__.py
-UfukMSA/mafft.py
-UfukMSA_221201022.egg-info/PKG-INFO
-UfukMSA_221201022.egg-info/SOURCES.txt
-UfukMSA_221201022.egg-info/dependency_links.txt
-UfukMSA_221201022.egg-info/requires.txt
-UfukMSA_221201022.egg-info/top_level.txt
