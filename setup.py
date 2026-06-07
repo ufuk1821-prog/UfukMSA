@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="UfukMSA",
+    name="UfukMSA-221201022",
     version="0.1.0",
     author="Ufuk Dogan",
     author_email="221201022@rumeli.edu.tr",
