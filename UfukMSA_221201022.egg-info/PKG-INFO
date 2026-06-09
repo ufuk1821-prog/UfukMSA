@@ -1,0 +1,13 @@
+Metadata-Version: 2.4
+Name: UfukMSA-221201022
+Version: 0.2.0
+Summary: MAFFT-based Multiple Sequence Alignment
+Author: Ufuk Dogan
+Author-email: 221201022@rumeli.edu.tr
+Requires-Python: >=3.7
+Requires-Dist: numpy
+Dynamic: author
+Dynamic: author-email
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary

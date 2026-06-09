@@ -1,4 +1,4 @@
-from ufukmsa import mafft
+from UfukMSA import mafft
 
 sequences = {
     "seq1": "ACGTACGT",

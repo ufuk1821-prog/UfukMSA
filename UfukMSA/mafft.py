@@ -1,6 +1,19 @@
 import numpy as np
 from itertools import combinations
 
+def fft_similarity(seq1, seq2):
+    n = len(seq1) + len(seq2)
+    s1 = np.zeros(n)
+    s2 = np.zeros(n)
+    for i, c in enumerate(seq1.upper()):
+        s1[i] = ord(c)
+    for i, c in enumerate(seq2.upper()):
+        s2[i] = ord(c)
+    f1 = np.fft.fft(s1)
+    f2 = np.fft.fft(s2)
+    corr = np.fft.ifft(f1 * np.conj(f2))
+    return float(np.max(np.abs(corr))) / (len(seq1) * len(seq2) + 1)
+
 def nw_align(seq1, seq2, match=1, mismatch=-1, gap=-2):
     n, m = len(seq1), len(seq2)
     dp = np.zeros((n+1, m+1))
@@ -22,17 +35,14 @@ def nw_align(seq1, seq2, match=1, mismatch=-1, gap=-2):
             a1.append('-'); a2.append(seq2[j-1]); j -= 1
     return ''.join(reversed(a1)), ''.join(reversed(a2))
 
-def pairwise_score(s1, s2):
-    a1, a2 = nw_align(s1, s2)
-    return sum(a == b for a, b in zip(a1, a2)) / max(len(a1), 1)
-
-def build_guide_tree(seqs):
-    names = list(seqs.keys())
+def build_guide_tree(sequences):
+    names = list(sequences.keys())
     n = len(names)
     dist = {}
     for i, j in combinations(range(n), 2):
-        dist[(i,j)] = 1 - pairwise_score(seqs[names[i]], seqs[names[j]])
-    clusters = [list([i]) for i in range(n)]
+        sim = fft_similarity(sequences[names[i]], sequences[names[j]])
+        dist[(i,j)] = 1.0 / (sim + 1e-9)
+    clusters = [[i] for i in range(n)]
     order = []
     while len(clusters) > 1:
         best = min(
@@ -42,9 +52,8 @@ def build_guide_tree(seqs):
         )
         ci, cj = best
         order.append((list(clusters[ci]), list(clusters[cj])))
-        merged_cluster = clusters[ci] + clusters[cj]
+        clusters[ci] = clusters[ci] + clusters[cj]
         del clusters[cj]
-        clusters[ci] = merged_cluster
     return order, names
 
 def consensus_seq(profile):
@@ -73,12 +82,8 @@ def mafft(sequences):
         return {}
     if len(sequences) == 1:
         return dict(sequences)
-    
-    names = list(sequences.keys())
     order, names = build_guide_tree(sequences)
-    
     profiles = {i: [sequences[names[i]]] for i in range(len(names))}
-    
     for group1, group2 in order:
         p1 = [profiles[i][0] for i in group1]
         p2 = [profiles[i][0] for i in group2]
@@ -91,5 +96,4 @@ def mafft(sequences):
             profiles[ni] = [new_p1[idx]]
         for idx, ni in enumerate(group2):
             profiles[ni] = [new_p2[idx]]
-    
     return {names[i]: profiles[i][0] for i in range(len(names))}
